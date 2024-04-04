@@ -7,8 +7,6 @@ end
 
 local Job = require('plenary.job')
 
-local loriini = M.opts.bin
-
 local win_opts = {
   relative = 'cursor',  -- win, editor, cursor
   style = 'minimal', -- minimal, border
@@ -52,14 +50,14 @@ M.pick = function()
   local color_pattern = "#%x+"
   local start_pos, end_pos = line:find(color_pattern, 0, false)
   if (start_pos and end_pos) then
-    loriini = loriini .. " -c " .. line:sub(start_pos + 1, end_pos)
+    M.opts.bin = M.opts.bin .. " -c " .. line:sub(start_pos + 1, end_pos)
   end
 
   local BUFNR = vim.api.nvim_create_buf(false, true)
   local WINNR = vim.api.nvim_open_win(BUFNR, true, win_opts)
   vim.api.nvim_feedkeys("i", "n", false)
 
-  vim.fn.termopen(loriini, {
+  vim.fn.termopen(M.opts.bin, {
     on_exit = function(_, _, _)
       vim.api.nvim_win_close(WINNR, true)
     end
