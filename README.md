@@ -1,6 +1,6 @@
 # loriini.nvim
 
-This plugin lets you use the [loriini](github.com/kolja/loriini) color picker in Neovim.
+This plugin lets you use the [loriini](https://github.com/kolja/loriini) color picker in Neovim.
 
 ## Installation
 
@@ -10,7 +10,10 @@ using [lazy.nvim](https://github.com/folke/lazy.nvim):
     use {
         'kolja/loriini.nvim',
         cmd = 'Loriini',
-        dependencies = { 'nvim-lua/plenary.nvim' },
+        dependencies = { 
+            'nvim-lua/plenary.nvim', 
+            'NvChad/nvim-colorizer.lua'  -- optional
+        },
         config = function()
             require'loriini.nvim'.setup({
                 bin = '/usr/local/loriini', -- path to loriini executable
@@ -35,6 +38,7 @@ set up keybindings:
       end,
       { desc = 'run loriini' })
 ```
+
 ## License 
 
 MIT
