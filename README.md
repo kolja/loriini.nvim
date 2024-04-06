@@ -2,6 +2,10 @@
 
 This plugin lets you use the [loriini](https://github.com/kolja/loriini) color picker in Neovim.
 
+
+https://github.com/kolja/loriini.nvim/assets/28293/0ef5bf83-e920-4320-a11a-df7e89041a78
+
+
 ## Installation
 
 using [lazy.nvim](https://github.com/folke/lazy.nvim):
