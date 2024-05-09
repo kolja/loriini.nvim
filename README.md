@@ -11,15 +11,14 @@ https://github.com/kolja/loriini.nvim/assets/28293/0ef5bf83-e920-4320-a11a-df7e8
 using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
-    use {
+    {
         'kolja/loriini.nvim',
-        cmd = 'Loriini',
         dependencies = { 
             'nvim-lua/plenary.nvim', 
             'NvChad/nvim-colorizer.lua'  -- optional
         },
         config = function()
-            require'loriini.nvim'.setup({
+            require'loriini'.setup({
                 bin = '/usr/local/loriini', -- path to loriini executable
             })
         end
@@ -29,7 +28,7 @@ using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ## Usage
 
 ```lua
-    require'loriini.nvim'.pick()
+    require'loriini'.pick()
 ```
 
 ## Configuration
@@ -38,7 +37,7 @@ set up keybindings:
 
 ```lua
     vim.keymap.set('n', 'L', function()
-        require('loriini.nvim').pick()
+        require('loriini').pick()
       end,
       { desc = 'run loriini' })
 ```
