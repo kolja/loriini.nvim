@@ -1,7 +1,5 @@
 local M = {}
 
-local Job = require('plenary.job')
-
 M.setup = function(opts)
   M.opts = opts
 end
@@ -26,34 +24,40 @@ M.pick = function()
   os.execute('mkfifo ' .. pipe)
   local BUF = vim.api.nvim_get_current_buf()
 
-  local LISTEN = Job:new({
-    command = '/bin/dd',
-    args = { 'if=' .. pipe, 'bs=7' },
-    interactive = false,
-    on_stderr = function(_, data, _)
-      print(data)
-    end,
-    on_exit = function(job, _, _)
-      vim.schedule(function()
-        job:shutdown()
-        os.execute('rm -f ' .. pipe)
+  local uv = vim.uv or vim.loop
+  local fd = uv.fs_open(pipe, "r+", tonumber("644", 8))
+  local reader = uv.new_pipe(false)
+  reader:open(fd)
+
+  local closed = false
+  local cleanup = function()
+    if closed then return end
+    closed = true
+    if not reader:is_closing() then
+      reader:read_stop()
+      reader:close()
+    end
+    os.execute('rm -f ' .. pipe)
+  end
+
+  reader:read_start(function(err, data)
+    if err or not data then return end
+    local hex
+    for match in data:gmatch("%x%x%x%x%x%x") do hex = match end
+    if not hex then return end
+    vim.schedule(function()
+      vim.api.nvim_buf_call(BUF, function()
+        local cursor = vim.api.nvim_win_get_cursor(0)
+        local line = vim.api.nvim_get_current_line()
+        local color_pattern = "#%x+"
+        local start_pos, end_pos = line:find(color_pattern, 0, false)
+        if (not start_pos or not end_pos) then return end
+        local color = "#" .. hex
+        vim.api.nvim_buf_set_text(BUF, cursor[1] - 1, start_pos - 1, cursor[1] - 1, end_pos, { color })
+        if colorizer_installed then colorizer.attach_to_buffer(BUF) end
       end)
-    end,
-    on_stdout = function(_, data, _)
-      vim.schedule(function()
-        vim.api.nvim_buf_call(BUF, function()
-          local cursor = vim.api.nvim_win_get_cursor(0)
-          local line = vim.api.nvim_get_current_line()
-          local color_pattern = "#%x+"
-          local start_pos, end_pos = line:find(color_pattern, 0, false)
-          if (not start_pos or not end_pos) then return end
-          local color = "#" .. data
-          vim.api.nvim_buf_set_text(BUF, cursor[1] - 1, start_pos - 1, cursor[1] - 1, end_pos, { color })
-          if colorizer_installed then colorizer.attach_to_buffer(BUF) end
-        end)
-      end)
-    end,
-  }):start()
+    end)
+  end)
 
   local loriini = ''
   local line = vim.api.nvim_get_current_line()
@@ -71,7 +75,10 @@ M.pick = function()
 
   vim.fn.termopen(loriini, {
     on_exit = function(_, _, _)
-      vim.api.nvim_win_close(WINNR, true)
+      if vim.api.nvim_win_is_valid(WINNR) then
+        vim.api.nvim_win_close(WINNR, true)
+      end
+      cleanup()
     end,
   })
 end

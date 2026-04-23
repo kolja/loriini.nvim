@@ -8,21 +8,19 @@ https://github.com/kolja/loriini.nvim/assets/28293/0ef5bf83-e920-4320-a11a-df7e8
 
 ## Installation
 
-using [lazy.nvim](https://github.com/folke/lazy.nvim):
+using vim.pack:
 
 ```lua
-    {
-        'kolja/loriini.nvim',
-        dependencies = { 
-            'nvim-lua/plenary.nvim', 
-            'NvChad/nvim-colorizer.lua'  -- optional
-        },
-        config = function()
-            require'loriini'.setup({
-                bin = '/usr/local/loriini', -- path to loriini executable
-            })
-        end
-    }
+    vim.pack.add({ 
+        'https://github.com/kolja/loriini.nvim',
+        'https://github.com/NvChad/nvim-colorizer.lua'  -- optional
+    })
+
+    require('loriini').setup({
+        bin = '/usr/local/loriini', -- path to loriini executable
+    })
+
+    
 ```
 
 ## Usage
