@@ -13,11 +13,11 @@ using vim.pack:
 ```lua
     vim.pack.add({ 
         'https://github.com/kolja/loriini.nvim',
-        'https://github.com/NvChad/nvim-colorizer.lua'  -- optional
+        'https://github.com/catgoose/nvim-colorizer.lua'  -- optional
     })
 
     require('loriini').setup({
-        bin = '/usr/local/loriini', -- path to loriini executable
+        bin = '/bin/loriini', -- path to loriini executable
     })
 
     
